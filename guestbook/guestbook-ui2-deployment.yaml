@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: guestbook-ui2
+spec:
+  replicas: 4
+  revisionHistoryLimit: 3
+  strategy:
+    canary: # A new field that used to provide configurable options for a Canary strategy
+      steps:
+        - setWeight: 20
+        - pause: {}
+  selector:
+    matchLabels:
+      app: guestbook-ui2
+  template:
+    metadata:
+      labels:
+        app: guestbook-ui2
+    spec:
+      containers:
+        - image: gcr.io/heptio-images/ks-guestbook-demo:0.2
+          name: guestbook-ui2
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: "64Mi"
+              cpu: "100m"
